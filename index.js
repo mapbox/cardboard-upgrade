@@ -1,8 +1,9 @@
+var Dyno = require('dyno');
 var zeroTwoFive = require('geobuf-zero-two-five');
 var threeZeroZero = require('geobuf-three-zero-zero');
 var Pbf = require('pbf');
 
-module.exports = function(record) {
+var convert = module.exports = function(record) {
   var out = {
     key: record.dataset+'!feature!'+record.id.replace('id!', '')
   };
@@ -13,4 +14,46 @@ module.exports = function(record) {
   out.size = out.val.length;
 
   return out;
+};
+
+module.exports.streamHandler = function(config) {
+
+  var dyno = Dyno({table: config.mainTable, region: config.region, endpoint: config.endpoint});
+
+  return function(records, callback) {
+    var requestItems = records.map(function(record) {
+      var change = {};
+      change.before = record.dynamodb.OldImage ?
+          Dyno.deserialize(JSON.stringify(record.dynamodb.OldImage)) : undefined;
+      change.after = record.dynamodb.NewImage ?
+          Dyno.deserialize(JSON.stringify(record.dynamodb.NewImage)) : undefined;
+      change.action = record.eventName;
+      return change;
+    }).map(function(change) {
+      if (change.action === 'REMOVE') {
+        return {
+          DeleteRequest: {
+            Key: convert(change.before).key
+          }
+        }
+      }
+
+      return {
+        PutRequest: {
+          Item: convert(change.after) 
+        }
+      };
+    })
+
+    if (requestItems.length === 0) return setTimeout(callback, 0);
+
+    var params = { RequestItems: {} };
+    params.RequestItems[config.mainTable] = requestItems;
+
+    dyno.batchWriteAll(params).sendAll(10, function(err, res) {
+      if (err) return callback(err);
+      if (res.UnprocessedItems.length > 0) return callback(new Error('Not all records were written'));
+      callback();
+    });
+  }
 }
