@@ -1,0 +1,17 @@
+{
+  "name": "cardboard-upgrade",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "npm run geobuf-zero-two-five && npm run geobuf-three-zero-zero",
+    "geobuf-zero-two-five": "node ./download-rename geobuf ec969d191e15469eb94f1b220ac51a49af484629 geobuf-zero-two-five",
+    "geobuf-three-zero-zero": "node ./download-rename geobuf da968105a03604fc7610c6c0f3d8ccff08f74cac geobuf-three-zero-zero"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pbf": "^3.0.5",
+    "tape": "^4.6.3"
+  }
+}
