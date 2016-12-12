@@ -4,7 +4,7 @@
   "description": "Takes a `[cardboard@](https://github.com/mapbox/cardboard)2.2.0` feature record and converts it into a `cardboard@3.0.0` feature record;",
   "main": "index.js",
   "scripts": {
-    "test": "tape test/test.js",
+    "test": "tape test/*.test.js",
     "postinstall": "npm run geobuf-zero-two-five && npm run geobuf-three-zero-zero",
     "geobuf-zero-two-five": "node ./download-rename geobuf ec969d191e15469eb94f1b220ac51a49af484629 geobuf-zero-two-five",
     "geobuf-three-zero-zero": "node ./download-rename geobuf da968105a03604fc7610c6c0f3d8ccff08f74cac geobuf-three-zero-zero"
@@ -12,13 +12,17 @@
   "author": "Mapbox",
   "license": "ISC",
   "dependencies": {
+    "cardboard": "^3.0.0",
+    "dyno": "^1.3.0",
     "pbf": "^3.0.5",
     "tape": "^4.6.3"
   },
   "directories": {
     "test": "test"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "dynamodb-test": "^0.3.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mapbox/cardboard-upgrade.git"

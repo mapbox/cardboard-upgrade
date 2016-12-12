@@ -2,11 +2,10 @@ var Dyno = require('dyno');
 var zeroTwoFive = require('geobuf-zero-two-five');
 var threeZeroZero = require('geobuf-three-zero-zero');
 var Pbf = require('pbf');
+var utils = require('cardboard/lib/utils')();
 
 var convert = module.exports = function(record) {
-  var out = {
-    key: record.dataset+'!feature!'+record.id.replace('id!', '')
-  };
+  var out = utils.createFeatureKey(record.dataset, record.id.replace('id!', ''));
 
   var feature = zeroTwoFive.geobufToFeature(record.val);
 
@@ -33,7 +32,9 @@ module.exports.streamHandler = function(config) {
       if (change.action === 'REMOVE') {
         return {
           DeleteRequest: {
-            Key: convert(change.before).key
+            Key: {
+              key: convert(change.before).key
+            }
           }
         }
       }
@@ -43,14 +44,15 @@ module.exports.streamHandler = function(config) {
           Item: convert(change.after) 
         }
       };
-    })
-
+    });
+    
     if (requestItems.length === 0) return setTimeout(callback, 0);
 
     var params = { RequestItems: {} };
     params.RequestItems[config.mainTable] = requestItems;
 
     dyno.batchWriteAll(params).sendAll(10, function(err, res) {
+      if (err) console.log(err);
       if (err) return callback(err);
       if (res.UnprocessedItems.length > 0) return callback(new Error('Not all records were written'));
       callback();
