@@ -2,7 +2,8 @@ var Dyno = require('dyno');
 var zeroTwoFive = require('geobuf-zero-two-five');
 var threeZeroZero = require('geobuf-three-zero-zero');
 var Pbf = require('pbf');
-var utils = require('cardboard/lib/utils')();
+var utils = require('cardboard/lib/utils');
+var streamHelper = require('cardboard').streamHelper;
 
 var convert = module.exports = function(record) {
   var out = utils.createFeatureKey(record.dataset, record.id.replace('id!', ''));
@@ -19,16 +20,8 @@ module.exports.streamHandler = function(config) {
 
   var dyno = Dyno({table: config.mainTable, region: config.region, endpoint: config.endpoint});
 
-  return function(records, callback) {
-    var requestItems = records.map(function(record) {
-      var change = {};
-      change.before = record.dynamodb.OldImage ?
-          Dyno.deserialize(JSON.stringify(record.dynamodb.OldImage)) : undefined;
-      change.after = record.dynamodb.NewImage ?
-          Dyno.deserialize(JSON.stringify(record.dynamodb.NewImage)) : undefined;
-      change.action = record.eventName;
-      return change;
-    }).map(function(change) {
+  return streamHelper(['INSERT', 'REMOVE', 'MODIFY'], function(records, callback) {
+    var requestItems = records.map(function(change) {
       if (change.action === 'REMOVE') {
         return {
           DeleteRequest: {
@@ -57,5 +50,6 @@ module.exports.streamHandler = function(config) {
       if (res.UnprocessedItems.length > 0) return callback(new Error('Not all records were written'));
       callback();
     });
-  }
+
+  });
 }

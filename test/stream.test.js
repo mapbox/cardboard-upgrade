@@ -70,13 +70,15 @@ mainTable.test('handles delete events when a feature is in the db', [getRecord('
 mainTable.close();
 
 function toEvent(action, records) {
-    return records.map(function(mainRecord) {
-        var serialized = JSON.parse(Dyno.serialize(mainRecord));
-        var record = { eventName: action };
-        record.dynamodb = {};
-        record.dynamodb.OldImage = action !== 'INSERT' ? serialized : undefined;
-        record.dynamodb.NewImage = action !== 'REMOVE' ? serialized : undefined;
-        return record;
-    });
+    return {
+        records: records.map(function(mainRecord) {
+            var serialized = JSON.parse(Dyno.serialize(mainRecord));
+            var record = { eventName: action };
+            record.dynamodb = {};
+            record.dynamodb.OldImage = action !== 'INSERT' ? serialized : undefined;
+            record.dynamodb.NewImage = action !== 'REMOVE' ? serialized : undefined;
+            return record;
+        })
+    };
 }
 
