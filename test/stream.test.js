@@ -71,7 +71,7 @@ mainTable.close();
 
 function toEvent(action, records) {
     return {
-        records: records.map(function(mainRecord) {
+        Records: records.map(function(mainRecord) {
             var serialized = JSON.parse(Dyno.serialize(mainRecord));
             var record = { eventName: action };
             record.dynamodb = {};

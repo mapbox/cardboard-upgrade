@@ -4,13 +4,14 @@ var threeZeroZero = require('geobuf-three-zero-zero');
 var Pbf = require('pbf');
 var utils = require('cardboard/lib/utils');
 var streamHelper = require('cardboard').streamHelper;
+var bufferFrom = require('buffer-from');
 
 var convert = module.exports = function(record) {
   var out = utils.createFeatureKey(record.dataset, record.id.replace('id!', ''));
 
   var feature = zeroTwoFive.geobufToFeature(record.val);
 
-  out.val = Buffer.from(threeZeroZero.encode(feature, new Pbf()));
+  out.val = bufferFrom(threeZeroZero.encode(feature, new Pbf()));
   out.size = out.val.length;
 
   return out;
