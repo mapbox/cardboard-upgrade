@@ -6,6 +6,8 @@ var tableSpec = require('cardboard/lib/main-table.json');
 var mainTable = dynamodbTest(test, 'cardboard-upgrade', tableSpec);
 
 var config = {
+  accessKeyId: 'fake',
+  secretAccessKey: 'fake',
   mainTable: mainTable.tableName,
   region: 'test',
   endpoint: 'http://localhost:4567'
