@@ -1,5 +1,6 @@
 var test = require('tape');
 var upgrade = require('..');
+var getRecord = require('./get-record');
 
 test('convert two-two-zero to a three-zero-zero record', function(assert) {
   var before = getRecord('two-two-zero');
@@ -14,8 +15,3 @@ test('convert two-two-zero to a three-zero-zero record', function(assert) {
   assert.end();
 });
 
-function getRecord(p) {
-  var json = require('./feature-'+p+'.json');
-  json.val = Buffer.from(json.val.data);
-  return json;
-}
