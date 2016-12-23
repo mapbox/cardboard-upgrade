@@ -13,7 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "buffer-from": "^0.1.1",
-    "cardboard": "^3.0.0",
+    "@mapbox/cardboard": "^3.0.0",
     "dyno": "^1.4.0",
     "pbf": "^3.0.5",
     "tape": "^4.6.3"

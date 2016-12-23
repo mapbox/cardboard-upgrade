@@ -1,7 +1,7 @@
 var Dyno = require('dyno');
 var dynamodbTest = require('dynamodb-test');
 var test = require('tape');
-var tableSpec = require('cardboard/lib/main-table.json');
+var tableSpec = require('@mapbox/cardboard/lib/main-table.json');
 
 var mainTable = dynamodbTest(test, 'cardboard-upgrade', tableSpec);
 
@@ -18,7 +18,7 @@ var getRecord = require('./get-record');
 mainTable.test('handles insert events', function(assert) {
   var before = getRecord('two-two-zero'); 
   var streamHandler = require('..').streamHandler(config);
-  var cardboard = require('cardboard')(config);
+  var cardboard = require('@mapbox/cardboard')(config);
   streamHandler(toEvent('INSERT', [before]), function(err) {
     if (err) return assert.end(err, 'stream ran');
     cardboard.get('sandwich', 'test', function(err, fc) {
@@ -33,7 +33,7 @@ mainTable.test('handles insert events', function(assert) {
 mainTable.test('handles update events', function(assert) {
   var before = getRecord('two-two-zero'); 
   var streamHandler = require('..').streamHandler(config);
-  var cardboard = require('cardboard')(config);
+  var cardboard = require('@mapbox/cardboard')(config);
   streamHandler(toEvent('MODIFY', [before]), function(err) {
     if (err) return assert.end(err, 'stream ran');
     cardboard.get('sandwich', 'test', function(err, fc) {
@@ -57,7 +57,7 @@ mainTable.test('handles delete events when nothing is in the db', function(asser
 mainTable.test('handles delete events when a feature is in the db', [getRecord('three-zero-zero')], function(assert) {
   var before = getRecord('two-two-zero'); 
   var streamHandler = require('..').streamHandler(config);
-  var cardboard = require('cardboard')(config);
+  var cardboard = require('@mapbox/cardboard')(config);
   streamHandler(toEvent('REMOVE', [before]), function(err) {
     if (err) return assert.end(err, 'stream ran');
     cardboard.get('sandwich', 'test', function(err, fc) {

@@ -2,8 +2,8 @@ var Dyno = require('dyno');
 var zeroTwoFive = require('geobuf-zero-two-five');
 var threeZeroZero = require('geobuf-three-zero-zero');
 var Pbf = require('pbf');
-var utils = require('cardboard/lib/utils');
-var streamHelper = require('cardboard').streamHelper;
+var utils = require('@mapbox/cardboard/lib/utils');
+var streamHelper = require('@mapbox/cardboard').streamHelper;
 var bufferFrom = require('buffer-from');
 
 var convert = module.exports = function(record) {
